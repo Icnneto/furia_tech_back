@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { getApi } from "../controllers/countryStateApi.js";
+import { openAiKey } from "../controllers/openAiKey.js";
 // import { main } from "../controllers/sseController.js";
 // import { executeLiveScraper } from "../controllers/scraperLiveController.js";
 
@@ -12,6 +13,9 @@ const router = Router();
 // router.get('/execute-scraper', executeLiveScraper);
 
 // calls the API key for country state
-router.get('/retrieve-api', getApi)
+router.get('/retrieve-api', getApi);
+
+//open AI key
+router.get('/openai-key', openAiKey);
 
 export default router;
