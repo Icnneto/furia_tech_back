@@ -79,13 +79,9 @@ export async function scrapeProfile(url = "https://x.com/furia") {
             try {
                 const jsonResponse = await response.json();
 
-                const following = jsonResponse.data.user.result.legacy.friends_count;
-                const postsCount = jsonResponse.data.user.result.legacy.statuses_count;
                 const bio = jsonResponse.data.user.result.legacy.description
 
                 userInfosResponse.push({
-                    "num_seguindo": following,
-                    "num_posts": postsCount,
                     "bio": bio
                 });
 
