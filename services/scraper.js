@@ -9,7 +9,7 @@ puppeteerExtra.use(StealthPlugin());
  * @param {string} url - The URL of the user profile page
 */
 
-export async function scrapeProfile(url) {
+export async function scrapeProfile(url = "https://x.com/furia") {
     // launch args for puppeteer
     const launchArgs = [
         '--no-sandbox',
@@ -60,7 +60,7 @@ export async function scrapeProfile(url) {
             url.endsWith('.ttf') ||
             url.endsWith('.otf') ||
             url.includes('google-analytics') ||
-            url.includes('doubleclick.net')    
+            url.includes('doubleclick.net')
         ) {
             interceptedRequest.abort();
         } else {
@@ -69,26 +69,69 @@ export async function scrapeProfile(url) {
     });
 
     let userInfosResponse = [];
+    let userInfoCaptured = false;
+    let tweetsCaptured = false;
 
     page.on('response', async (response) => {
         const responseUrl = response.url();
-        
-        if (responseUrl.includes('UserByScreenName')) {
+
+        if (responseUrl.includes('UserByScreenName') && !userInfoCaptured) {
             try {
                 const jsonResponse = await response.json();
 
                 const following = jsonResponse.data.user.result.legacy.friends_count;
                 const postsCount = jsonResponse.data.user.result.legacy.statuses_count;
+                const bio = jsonResponse.data.user.result.legacy.description
 
                 userInfosResponse.push({
-                    "numFollowing": following,
-                    "numPosts": postsCount
+                    "num_seguindo": following,
+                    "num_posts": postsCount,
+                    "bio": bio
                 });
+
+                userInfoCaptured = true;
 
             } catch (error) {
                 console.error("Failed to process JSON:", error);
             };
         }
+
+        if (responseUrl.includes('UserTweets') && !tweetsCaptured) {
+            try {
+                const jsonResponse = await response.json();
+
+                const instructions = jsonResponse.data.user.result.timeline.timeline.instructions;
+
+                let fullTexts = [];
+
+                // Percorre todas as instruções do tipo TimelineAddEntries
+                instructions.forEach(instruction => {
+                    if (instruction.type === 'TimelineAddEntries' && instruction.entries) {
+                        instruction.entries.forEach(entry => {
+                            try {
+                                const tweet = entry.content?.itemContent?.tweet_results?.result?.legacy;
+                                if (tweet?.full_text) {
+                                    fullTexts.push(tweet.full_text);
+                                }
+                            } catch (err) {
+                                console.warn("Erro ao extrair full_text de um tweet:", err);
+                            }
+                        });
+                    }
+                });
+
+                const postsLimpos = limparPosts(fullTexts);
+
+                userInfosResponse.push({
+                    "posts_conteudo": postsLimpos
+                });
+
+                tweetsCaptured = true;
+
+            } catch (error) {
+                console.error("Failed to process UserTweets JSON:", error);
+            }
+        };
     });
 
     try {
@@ -129,3 +172,17 @@ async function trackMemoryUsage(page, label = '') {
     console.log('JSHeapUsedSize:', (metrics.JSHeapUsedSize / 1024 / 1024).toFixed(2), 'MB');
     console.log('JSHeapTotalSize:', (metrics.JSHeapTotalSize / 1024 / 1024).toFixed(2), 'MB');
 };
+
+function limparPosts(posts) {
+    return posts
+        .map(post => {
+            return post
+                .replace(/https?:\/\/\S+/g, '')          // Remove URLs
+                .replace(/^RT\s@[^:]+:\s?/g, '')          // Remove "RT @usuario:"
+                .replace(/\s+/g, ' ')                     // Remove espaços excessivos
+                .trim();                                  // Remove espaços nas pontas
+        })
+        .filter(post => post.length > 10); // Remove posts muito curtos (ajustável)
+};
+
+scrapeProfile();
