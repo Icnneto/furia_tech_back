@@ -2,16 +2,17 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
-    birth_date: { type: Date },
+    nascimento: { type: String },
     email: { type: String, required: true, unique: true },
-    address: {
-        country: { type: String },
-        state: { type: String },
+    cpf: { type: String, required: true },
+    endereco: {
+        pais: { type: String },
+        estado: { type: String },
     },
-    interests: [{ type: String }],
-    events: [{ type: String }],
-    x_link: { type: String },
-    document: { type: String },
+    interesses: [{ type: String }],
+    eventos: [{ type: String }],
+    perfil_x: { type: String },
+    documento: { type: String },
 }, {
     versionKey: false,
     timestamps: {
@@ -20,6 +21,6 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-const userData = mongoose.model('users_data', userSchema);
+const userDataMongo = mongoose.model('users_data', userSchema);
 
-export default userData;
+export default userDataMongo;

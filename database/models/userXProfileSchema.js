@@ -2,10 +2,10 @@ import mongoose from "mongoose";
 
 const userXProfile = new mongoose.Schema({
     user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'users_data', required: true },
-    num_following: { type: Number, required: true },
+    num_seguindo: { type: Number, required: true },
     num_posts: { type: Number, required: true },
     bio: { type: String, required: true },
-    posts_content: [{ type: String }]
+    posts_conteudo: [{ type: String }]
 },{
     versionKey: false,
     timestamps: {

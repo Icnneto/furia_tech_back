@@ -9,5 +9,5 @@ let PORT = process.env.PORT || 3000;
 // startWatching();
 
 app.listen(PORT, () => {
-    console.log(`Server-sent Events server running http://localhost:${PORT}`);
+    console.log(`Server running http://localhost:${PORT}`);
 });
