@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
         state: { type: String },
     },
     interests: [{ type: String }],
-    events: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Event' }],
+    events: [{ type: String }],
     x_link: { type: String },
     document: { type: String },
 }, {
