@@ -1,17 +1,17 @@
 import express from 'express';
 import cors from 'cors';
 import router from './routes/routes.js';
-// import { connectDatabase } from '../database/config/dbConnect.js';
+import { connectDatabase } from '../database/config/dbConnect.js';  
 
-// const connection = await connectDatabase();
+const connection = await connectDatabase();
 
-// connection.on('error', (e) => {
-//     console.error(`Database connection error: ${e}`);
-// });
+connection.on('error', (e) => {
+    console.error(`Database connection error: ${e}`);
+});
 
-// connection.once('open', () => {
-//     console.log('Database connection established')
-// });
+connection.once('open', () => {
+    console.log('Database connection established')
+});
 
 const app = express();
 
