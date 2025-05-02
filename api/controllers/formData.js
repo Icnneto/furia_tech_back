@@ -3,6 +3,7 @@ import XScrapedData from "../../classes/XScrapedData.js";
 import AIProfileAnalysis from "../../classes/aiProfileAnalysis.js";
 import userDataMongo from "../../database/models/userSchema.js";
 import { scrapeProfile } from "../../services/scraper.js";
+import { AIAnalysis } from "../../services/aiAnalysis.js";
 
 // receber dados do front
 // chamar scraper
@@ -23,6 +24,11 @@ export async function formData(req, res) {
         const mergedData = Object.assign({}, ...resultadoScraper);
         const XData = new XScrapedData(mergedData);
         console.log(XData);
+
+        // 3. análise pela IA
+        const resultadoAI = await AIAnalysis(userData, XData);
+        const AIData = new AIProfileAnalysis(resultadoAI);
+        console.log(AIData);
 
     } catch (error) {
         

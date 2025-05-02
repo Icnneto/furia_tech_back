@@ -10,6 +10,8 @@ puppeteerExtra.use(StealthPlugin());
 */
 
 export async function scrapeProfile(url = "https://x.com/furia") {
+    console.log('Iniciando raspagem de dados...')
+
     // launch args for puppeteer
     const launchArgs = [
         '--no-sandbox',
@@ -180,5 +182,3 @@ function limparPosts(posts) {
         })
         .filter(post => post.length > 10); // Remove posts muito curtos (ajustável)
 };
-
-scrapeProfile();
