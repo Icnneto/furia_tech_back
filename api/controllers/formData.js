@@ -1,9 +1,9 @@
 import UserData from "../../classes/userData.js";
 import XScrapedData from "../../classes/XScrapedData.js";
 import AIProfileAnalysis from "../../classes/aiProfileAnalysis.js";
-import userDataMongo from "../../database/models/userSchema.js";
 import { scrapeProfile } from "../../services/scraper.js";
 import { AIAnalysis } from "../../services/aiAnalysis.js";
+import { connectAndSendData } from "../../services/connectAndSendData.js";
 
 // receber dados do front
 // chamar scraper
@@ -28,7 +28,11 @@ export async function formData(req, res) {
         // 3. análise pela IA
         const resultadoAI = await AIAnalysis(userData, XData);
         const AIData = new AIProfileAnalysis(resultadoAI);
-        console.log(AIData);
+        console.log(AIData)
+        
+        // 4. enviar os dados para o mongoDB
+        const enviarDados = await connectAndSendData(userData, XData, AIData)
+        console.log(enviarDados);
 
     } catch (error) {
         

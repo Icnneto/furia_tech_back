@@ -5,10 +5,8 @@ const userSchema = new mongoose.Schema({
     nascimento: { type: String },
     email: { type: String, required: true, unique: true },
     cpf: { type: String, required: true },
-    endereco: {
-        pais: { type: String },
-        estado: { type: String },
-    },
+    pais: { type: String },
+    estado: { type: String },
     interesses: [{ type: String }],
     eventos: [{ type: String }],
     perfil_x: { type: String },
