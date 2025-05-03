@@ -20,18 +20,25 @@ export async function connectAndSendData(userDataInput, xDataInput, AIAnalysisIn
             throw new Error('One or more input data are missing');
         }
 
-        // check if user already exists (pedir para IA fazer)
+        // check if user already exists
+        let user = await userDataMongo.findOne({ cpf: userDataInput.cpf });
 
-        const userData = await userDataMongo.create(userDataInput);
+        if (!user) {
+            user = await userDataMongo.create(userDataInput);
+        };
 
-        const XData = await scrapedProfile.create({
-            user_id: userData._id,
-            bio: xDataInput.bio,
-            posts_conteudo: xDataInput.posts_conteudo
-        });
+        let xData = await userDataMongo.findOne({ user_id: user._id });
+
+        if (!xData) {
+            xData = await scrapedProfile.create({
+                user_id: user._id,
+                bio: xDataInput.bio,
+                posts_conteudo: xDataInput.posts_conteudo
+            });
+        };
 
         await analysisAI.create({
-            user_scraper_id: XData._id,
+            user_scraper_id: xData._id,
             relevante_para_informativos: AIAnalysisInput.relevante_para_informativos,
             relevante_para_eventos: AIAnalysisInput.relevante_para_eventos,
             sinergia_com_furia: AIAnalysisInput.sinergia_com_furia,
@@ -42,7 +49,6 @@ export async function connectAndSendData(userDataInput, xDataInput, AIAnalysisIn
 
     } catch (error) {
         console.error('Erro ao salvar no database:', error);
-
         return `${error.message}`;
     };
 };

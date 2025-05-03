@@ -5,13 +5,9 @@ import { scrapeProfile } from "../../services/scraper.js";
 import { AIAnalysis } from "../../services/aiAnalysis.js";
 import { connectAndSendData } from "../../services/connectAndSendData.js";
 
-// receber dados do front
-// chamar scraper
-// chamar IA para analisar o perfil
-// enviar dados para o mongoDB
-
 
 export async function formData(req, res) {
+    // enviar resposta para evitar timeout no render
     res.status(201).json({message: 'sucesso'});
 
     try {
@@ -35,7 +31,7 @@ export async function formData(req, res) {
         console.log(enviarDados);
 
     } catch (error) {
-        
+        res.status(500).json({ message: `Erro ao executar scraper e análise: ${error}` })
     }
 };
 
