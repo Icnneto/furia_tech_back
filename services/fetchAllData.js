@@ -17,7 +17,7 @@ export async function fetchAllData() {
             find({}).
             populate({
                 path: 'user_scraper_id',
-                select: 'bio posts_conteudo -_id',
+                select: '-bio -posts_conteudo -_id',
                 populate: {
                     path: 'user_id',
                     select: 'username nascimento email pais estado interesses eventos perfil_x -_id'
